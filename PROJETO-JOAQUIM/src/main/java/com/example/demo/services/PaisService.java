@@ -16,7 +16,11 @@ public class PaisService {
 	
 	@Autowired
 	private PaisRepository repo;
-	
+
+	public PaisService(PaisRepository repository) {
+		this.repo = repository;
+	}
+
 	public List<Pais> findAll(){
 		return repo.findAll();
 	}
