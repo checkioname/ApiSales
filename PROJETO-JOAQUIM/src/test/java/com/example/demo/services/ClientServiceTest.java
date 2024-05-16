@@ -41,7 +41,7 @@ class ClientServiceTest {
     @Test
     @DisplayName("Testing finding user with a valid id")
     void findById() {
-        Cliente pais = new Cliente("123","lucas","lucas@gmail.com");
+        Cliente pais = new Cliente("lucas","lucas@gmail",22);
         Mockito.when(repository.findById(Mockito.any())).thenReturn(Optional.ofNullable(pais));
         Cliente response = service.findById("123");
         Assertions.assertEquals(response, pais);
@@ -50,7 +50,7 @@ class ClientServiceTest {
     @Test
     @DisplayName("Testing country insert")
     void insert() {
-        Cliente pais = new Cliente("123","lucas","lucas@gmail.com");
+        Cliente pais = new Cliente("lucas","lucas@gmail",22);
         Mockito.when(repository.insert((Cliente) Mockito.any())).thenReturn(pais);
         Cliente response = service.insert(Mockito.any());
         Assertions.assertEquals(response,pais);
