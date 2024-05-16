@@ -41,7 +41,7 @@ public class ClienteController {
 	@GetMapping(value="/{id}")
 	public ResponseEntity<ClienteDTO> findById(@PathVariable String id){
 		Cliente cliente = service.findById(id);
-		return ResponseEntity.ok().body(new ClienteDTO(cliente.getNome(),cliente.getEmail(), cliente.getIdade()));
+		return ResponseEntity.ok().body(new ClienteDTO(cliente.getId(),cliente.getNome(),cliente.getEmail(), cliente.getIdade()));
 	}
 	
 	@PostMapping

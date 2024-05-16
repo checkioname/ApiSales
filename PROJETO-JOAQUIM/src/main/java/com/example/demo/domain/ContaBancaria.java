@@ -14,27 +14,33 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection="conta")
 public class ContaBancaria implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@Getter private String id;
-	@Getter@Setter private String nomeTitular;
-	@Getter@Setter private Double saldo;
-	@Getter@Setter private Double limite;
-	@Getter@Setter private String nroAgencia;
-	@Getter@Setter private ClienteDTO cliente;
 
-	public ContaBancaria(String nomeTitular, String nroAgencia) {
+	@Id
+	@Getter
+	private String id;
+	@Getter
+	@Setter
+	private Double saldo;
+	@Getter
+	@Setter
+	private Double limite;
+	@Getter
+	@Setter
+	private String nroAgencia;
+	@Getter
+	@Setter
+	private ClienteDTO cliente;
+
+	public ContaBancaria(ClienteDTO cliente, String nroAgencia) {
 		super();
-		this.nomeTitular = nomeTitular;
-		this.saldo = saldo;
-		this.limite = limite;
+		this.saldo = 0.0;
+		this.limite = 0.0;
 		this.nroAgencia = nroAgencia;
 		this.cliente = cliente;
 	}
 
-	public ContaBancaria(String nomeTitular, double saldo, double limite, String nroAgencia, ClienteDTO clienteDTO) {
+	public ContaBancaria(double saldo, double limite, String nroAgencia, ClienteDTO clienteDTO) {
 		super();
-		this.nomeTitular = nomeTitular;
 		this.saldo = saldo;
 		this.limite = limite;
 		this.nroAgencia = nroAgencia;
@@ -59,28 +65,25 @@ public class ContaBancaria implements Serializable {
 		return Objects.equals(id, other.id);
 	}
 
-	public boolean verificaLimite(double valor){
-		if (valor > this.saldo) {
-			if (valor <= (this.saldo + this.limite)) {
+	public boolean verificaLimite(double valorSaque) {
+		if (valorSaque > this.saldo) {
+			if (valorSaque <= (this.saldo + this.limite)) {
 				return true;
 			} else {
 				return false;
 			}
-		}
-		else {
+		} else {
 			return true;
 		}
 	}
 
-	public void realizaSaque(double valor){
-		if (verificaLimite(valor)){
-			if (valor <= this.saldo){
-				this.saldo -= valor;
-			}
-			if (valor > this.saldo && valor<= (this.saldo + this.limite)){
-				this.limite -= valor;
+	public void realizaSaque(double valor) {
+		if (verificaLimite(valor)) {
+			this.saldo -= valor;
+			if (this.saldo < 0) {
+				this.limite += saldo;
+				this.saldo = 0.0;
 			}
 		}
 	}
-
 }

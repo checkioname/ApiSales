@@ -29,7 +29,7 @@ public class ContaBancariaController {
 	@GetMapping(value="/namesearch")
 	public ResponseEntity<List<ContaBancaria>> findByName(@RequestParam(value="text", defaultValue="")String name){
 		name = URL.decodeParam(name);
-		List<ContaBancaria> list = service.findByNomeTitular(name);
+		List<ContaBancaria> list = service.findByCliente_Nome(name);
 		return ResponseEntity.ok().body(list);
 	}
 
@@ -49,6 +49,14 @@ public class ContaBancariaController {
 		}
 	}
 
-
+	@PostMapping("/{contaId}/deposito")
+	public ResponseEntity<String> deposito(@PathVariable String contaId, @RequestParam double valor) {
+		try {
+			service.realizaDeposito(contaId, valor);
+			return ResponseEntity.ok("Deposito realizado com sucesso.");
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
 
 }

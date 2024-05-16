@@ -18,16 +18,11 @@ public class ClienteDTO implements Serializable{
 	@Getter @Setter private Integer idade;
 
 
-	public ClienteDTO(String nome, String email, Integer idade) {
-		this.nome = nome;
-		this.email = email;
-		this.idade = idade;
-	}
-
 	public ClienteDTO(String id, String nome, String email, Integer idade) {
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.idade = idade;
 	}
+
 }

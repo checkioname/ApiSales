@@ -8,5 +8,5 @@ import com.example.demo.domain.Cliente;
 @Repository
 public interface ClienteRepository extends MongoRepository<Cliente, String> {
 
-    Cliente findByNome();
+    Cliente findByNome(String nome);
 }
