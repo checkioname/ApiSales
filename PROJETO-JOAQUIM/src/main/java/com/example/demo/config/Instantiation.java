@@ -2,42 +2,42 @@ package com.example.demo.config;
 
 import java.util.Arrays;
 
+import com.example.demo.dto.ClienteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
 import com.example.demo.domain.ContaBancaria;
-import com.example.demo.domain.Pais;
-import com.example.demo.dto.NacionalidadeDTO;
+import com.example.demo.domain.Cliente;
 import com.example.demo.repository.ContaBancariaRepository;
-import com.example.demo.repository.PaisRepository;
+import com.example.demo.repository.ClienteRepository;
 
 @Configuration
 public class Instantiation implements CommandLineRunner{
 
 	@Autowired
-	private PaisRepository paisRepository;
-	
+	private ClienteRepository clienteRepository;
+
 	@Autowired
 	private ContaBancariaRepository contaRepository;
-		
+
 	@Override
 	public void run(String... args) throws Exception {
-		
-		paisRepository.deleteAll();
+
+		clienteRepository.deleteAll();
 		contaRepository.deleteAll();
-		
-		Pais brasil = new Pais(null, "Brasil", "América do Sul", "10000");
-		Pais chile = new Pais(null, "Chile", "América do Sul", "1500");
-		Pais mexico = new Pais(null, "México", "América Central", "39123");
-			
-		paisRepository.saveAll(Arrays.asList(brasil, chile, mexico));
-		
-		ContaBancaria conta1 = new ContaBancaria(null, "Agenor Vieira", "100.000", "101", new NacionalidadeDTO(brasil));
-		ContaBancaria conta2 = new ContaBancaria(null, "Giovanna Micher", "100.000.000.000", "102", new NacionalidadeDTO(brasil));
+
+		Cliente cliente1 = new Cliente("Lucas", "lucas@gmail.com", 22);
+		Cliente cliente2 = new Cliente("Maria", "maria@yahoo.com",21);
+		Cliente cliente3 = new Cliente("Matheus", "mtheus@email.com",19);
+
+		clienteRepository.saveAll(Arrays.asList(cliente1,cliente2, cliente3));
+
+		ContaBancaria conta1 = new ContaBancaria("Agenor Vieira", 100.000,1000.0,  "101", new ClienteDTO(cliente1.getNome(),cliente1.getEmail(),cliente1.getIdade()));
+		ContaBancaria conta2 = new ContaBancaria("Giovanna Micher", 100000.00, 10000.0, "102", new ClienteDTO(cliente2.getNome(),cliente2.getEmail(),cliente2.getIdade()));
 		
 		contaRepository.saveAll(Arrays.asList(conta1, conta2));
-		brasil.getContas().addAll(Arrays.asList(conta1, conta2));
-		paisRepository.save(brasil);
+		cliente1.getContas().addAll(Arrays.asList(conta1, conta2));
+		clienteRepository.save(cliente1);
 	}
 }

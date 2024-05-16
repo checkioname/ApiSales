@@ -16,35 +16,37 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.demo.domain.ContaBancaria;
-import com.example.demo.domain.Pais;
-import com.example.demo.dto.PaisDTO;
-import com.example.demo.services.PaisService;
+import com.example.demo.domain.Cliente;
+import com.example.demo.dto.ClienteDTO;
+import com.example.demo.services.ClienteService;
 
 @RestController
-@RequestMapping(value="/paises")
-public class PaisController {
+@RequestMapping(value="/clientes")
+public class ClienteController {
 	
 	@Autowired
-	private PaisService service;
+	private ClienteService service;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public ResponseEntity<List<PaisDTO>> findAll(){
-		List<Pais> list = service.findAll();
+	public ResponseEntity<List<ClienteDTO>> findAll(){
+		List<Cliente> list = service.findAll();
 		
 		//converte cada objeto da lista original para um DTO
-		List<PaisDTO> listDto = list.stream().map(x -> new PaisDTO(x)).collect(Collectors.toList());
+		List<ClienteDTO> listDto = list.stream()
+				.map(x -> new ClienteDTO(x.getId(), x.getNome(), x.getEmail(), x.getIdade()))
+				.collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDto);
 	}
 	
 	@GetMapping(value="/{id}")
-	public ResponseEntity<PaisDTO> findById(@PathVariable String id){
-		Pais pais = service.findById(id);
-		return ResponseEntity.ok().body(new PaisDTO(pais));
+	public ResponseEntity<ClienteDTO> findById(@PathVariable String id){
+		Cliente cliente = service.findById(id);
+		return ResponseEntity.ok().body(new ClienteDTO(cliente.getNome(),cliente.getEmail(), cliente.getIdade()));
 	}
 	
 	@PostMapping
-	public ResponseEntity<Void> insert(@RequestBody PaisDTO pais){
-		Pais obj = service.fromDTO(pais);
+	public ResponseEntity<Void> insert(@RequestBody ClienteDTO cliente){
+		Cliente obj = service.fromDTO(cliente);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
@@ -57,17 +59,17 @@ public class PaisController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Void> update(@RequestBody PaisDTO objDto, @PathVariable String id){
-		Pais pais = service.fromDTO(objDto);
-		pais.setId(id);
-		pais = service.update(pais);
+	public ResponseEntity<Void> update(@RequestBody ClienteDTO objDto, @PathVariable String id){
+		Cliente cliente = service.fromDTO(objDto);
+		cliente.setId(id);
+		cliente = service.update(cliente);
 		return ResponseEntity.noContent().build();
 	}
 	
 	//retorna as contas de um país
 	@GetMapping(value="/{id}/contas")
 	public ResponseEntity<List<ContaBancaria>> findContas(@PathVariable String id){
-		Pais pais = service.findById(id);
-		return ResponseEntity.ok().body(pais.getContas());
+		Cliente cliente = service.findById(id);
+		return ResponseEntity.ok().body(cliente.getContas());
 	}
 }

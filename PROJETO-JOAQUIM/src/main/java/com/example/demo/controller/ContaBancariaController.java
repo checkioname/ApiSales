@@ -2,13 +2,12 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import com.example.demo.domain.Cliente;
+import com.example.demo.dto.ClienteDTO;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.controller.util.URL;
 import com.example.demo.domain.ContaBancaria;
@@ -33,5 +32,23 @@ public class ContaBancariaController {
 		List<ContaBancaria> list = service.findByNomeTitular(name);
 		return ResponseEntity.ok().body(list);
 	}
-	
+
+	@PostMapping(value="/")
+	public ResponseEntity<Void> sendMoney(@RequestParam String nome, @RequestParam Double valor){
+
+		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{contaId}/saque")
+	public ResponseEntity<String> saque(@PathVariable String contaId, @RequestParam double valor) {
+		try {
+			service.realizaSaque(contaId, valor);
+			return ResponseEntity.ok("Saque realizado com sucesso.");
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+
+
+
 }

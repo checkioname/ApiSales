@@ -5,32 +5,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="pais")
-public class Pais implements Serializable{
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection="cliente")
+public class Cliente implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	private String id;
 	private String nome;
-	private String continente;
-	private String populacao;
+	private String email;
+	@Getter @Setter	private Integer idade;
 	
 	@DBRef(lazy = true)
 	private List<ContaBancaria> contas = new ArrayList<>();
-	
-	public Pais(String id, String nome, String continente, String populacao) {
-		super();
-		this.id = id;
-		this.nome = nome;
-		this.continente = continente;
-		this.populacao = populacao;
-	}
 
-	public Pais() {
+	public Cliente(String nome, String email, Integer idade) {
+		this.nome = nome;
+		this.email = email;
+		this.idade = idade;
 	}
 
 	public String getId() {
@@ -49,20 +50,12 @@ public class Pais implements Serializable{
 		this.nome = nome;
 	}
 
-	public String getContinente() {
-		return continente;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setContinente(String continente) {
-		this.continente = continente;
-	}
-
-	public String getPopulacao() {
-		return populacao;
-	}
-
-	public void setPopulacao(String populacao) {
-		this.populacao = populacao;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 	public List<ContaBancaria> getContas() {
@@ -86,7 +79,7 @@ public class Pais implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Pais other = (Pais) obj;
+		Cliente other = (Cliente) obj;
 		return id == other.id;
 	}
 

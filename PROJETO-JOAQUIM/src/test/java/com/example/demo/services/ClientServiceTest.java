@@ -1,9 +1,9 @@
 package com.example.demo.services;
 
-import com.example.demo.repository.PaisRepository;
+import com.example.demo.domain.Cliente;
+import com.example.demo.repository.ClienteRepository;
 import com.example.demo.services.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.*;
-import com.example.demo.domain.Pais;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -15,44 +15,44 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class PaisServiceTest {
+class ClientServiceTest {
 
-    private PaisService service;
+    private ClienteService service;
 
     @Mock
-    private PaisRepository repository;
+    private ClienteRepository repository;
 
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        this.service = new PaisService(repository);
+        this.service = new ClienteService(repository);
     }
 
     @Test
     void findAll() {
-        List<Pais> paises = new ArrayList<>();
-        Mockito.when(repository.findAll()).thenReturn(paises);
-        List<Pais> response = service.findAll();
-        assertEquals(response, paises);
+        List<Cliente> clientes = new ArrayList<>();
+        Mockito.when(repository.findAll()).thenReturn(clientes);
+        List<Cliente> response = service.findAll();
+        assertEquals(response, clientes);
     }
 
 
     @Test
     @DisplayName("Testing finding user with a valid id")
     void findById() {
-        Pais pais = new Pais("123","Brasil","America do Sul","1000000");
+        Cliente pais = new Cliente("123","lucas","lucas@gmail.com");
         Mockito.when(repository.findById(Mockito.any())).thenReturn(Optional.ofNullable(pais));
-        Pais response = service.findById("123");
+        Cliente response = service.findById("123");
         Assertions.assertEquals(response, pais);
     }
 
     @Test
     @DisplayName("Testing country insert")
     void insert() {
-        Pais pais = new Pais("123","Brasil","America do Sul","1000000");
-        Mockito.when(repository.insert((Pais) Mockito.any())).thenReturn(pais);
-        Pais response = service.insert(Mockito.any());
+        Cliente pais = new Cliente("123","lucas","lucas@gmail.com");
+        Mockito.when(repository.insert((Cliente) Mockito.any())).thenReturn(pais);
+        Cliente response = service.insert(Mockito.any());
         Assertions.assertEquals(response,pais);
     }
 
