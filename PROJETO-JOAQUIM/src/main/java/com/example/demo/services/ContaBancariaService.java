@@ -24,7 +24,7 @@ public class ContaBancariaService {
 
 	private boolean validaValorDeposito(Double valor){
 		if (valor <= 0){
-			throw new IllegalArgumentException("O valor do depósito deve ser maior que zero");
+			return false;
 		} else{
 			return true;
 		}
@@ -50,25 +50,31 @@ public class ContaBancariaService {
 	}
 
 	public void realizaDeposito(String ContaId, Double valor){
-			Optional<ContaBancaria> opConta = repoConta.findById(ContaId);
-			opConta.ifPresent(conta ->{
+			ContaBancaria conta = repoConta.findById(ContaId)
+									.orElseThrow(() -> new IllegalArgumentException("Conta não encontrada com o ID fornecido"));;
 				if (validaValorDeposito(valor)){
 					conta.setSaldo(conta.getSaldo() + valor);
 					repoConta.save(conta);
 				}
-			});
-	}
+				else{
+					throw new IllegalArgumentException("O valor do depósito é invalido");
+				}
+			}
 
-	public void realizaSaque(String ContaId, Double valor){
-		ContaBancaria conta = findById(ContaId);
-		if (conta.verificaLimite(valor)){
-			conta.realizaSaque(valor);
-			repoConta.save(conta);
-		}
+
+	public void realizaSaque(String ContaId, Double valorSaque){
+		ContaBancaria conta = repoConta.findById(ContaId)
+				.orElseThrow(() -> new IllegalArgumentException("Conta não encontrada com o ID fornecido"));;
+		if (conta.verificaSaldoSaque(valorSaque)){
+			conta.sacar(valorSaque);
+			repoConta.save(conta);}
 		else{
-			throw new IllegalArgumentException("Saldo insuficiente.");
+			if (valorSaque <= 0){
+				throw new IllegalArgumentException("Valor inválido");
+			}else{
+				throw new IllegalArgumentException("Saldo insuficiente.");
+			}
 		}
-
 	}
 
 }

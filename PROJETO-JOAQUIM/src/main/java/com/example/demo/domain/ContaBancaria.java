@@ -65,7 +65,10 @@ public class ContaBancaria implements Serializable {
 		return Objects.equals(id, other.id);
 	}
 
-	public boolean verificaLimite(double valorSaque) {
+	public boolean verificaSaldoSaque(double valorSaque) {
+		if (valorSaque <= 0){
+			return false;
+		}
 		if (valorSaque > this.saldo) {
 			if (valorSaque <= (this.saldo + this.limite)) {
 				return true;
@@ -77,8 +80,8 @@ public class ContaBancaria implements Serializable {
 		}
 	}
 
-	public void realizaSaque(double valor) {
-		if (verificaLimite(valor)) {
+	public void sacar(double valor) {
+		if (verificaSaldoSaque(valor)) {
 			this.saldo -= valor;
 			if (this.saldo < 0) {
 				this.limite += saldo;
