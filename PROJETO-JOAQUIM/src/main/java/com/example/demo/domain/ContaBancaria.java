@@ -69,16 +69,12 @@ public class ContaBancaria implements Serializable {
 		if (valorSaque <= 0){
 			return false;
 		}
-		if (valorSaque > this.saldo) {
-			if (valorSaque <= (this.saldo + this.limite)) {
+		if (valorSaque <= (this.saldo + this.limite)) {
 				return true;
 			} else {
 				return false;
 			}
-		} else {
-			return true;
 		}
-	}
 
 	public void sacar(double valor) {
 		if (verificaSaldoSaque(valor)) {
