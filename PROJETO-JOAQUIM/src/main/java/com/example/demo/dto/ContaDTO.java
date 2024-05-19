@@ -2,9 +2,6 @@ package com.example.demo.dto;
 
 import java.io.Serializable;
 
-import com.example.demo.domain.Cliente;
-import com.example.demo.domain.ContaBancaria;
-import com.example.demo.repository.ClienteRepository;
 import lombok.*;
 
 @Builder

@@ -2,15 +2,14 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import com.example.demo.domain.Cliente;
-import com.example.demo.dto.ClienteDTO;
-import org.apache.coyote.Response;
+import com.example.demo.domain.ContaBancaria;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.controller.util.URL;
-import com.example.demo.domain.ContaBancaria;
 import com.example.demo.services.ContaBancariaService;
 
 @RestController
@@ -35,22 +34,22 @@ public class ContaBancariaController {
 
 	@PostMapping(value="/")
 	public ResponseEntity<Void> sendMoney(@RequestParam String nome, @RequestParam Double valor){
-
 		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/{contaId}/saque")
-	public ResponseEntity<String> saque(@PathVariable String contaId, @RequestParam double valor) {
+	public ResponseEntity<String> saque(@PathVariable @Pattern(regexp = "^[^\\\\/]*$") String contaId, @RequestParam double valor) {
+		System.out.println(contaId);
 		try {
-			service.realizaSaque(contaId, valor);
-			return ResponseEntity.ok("Saque realizado com sucesso.");
+			Double saque = service.realizaSaque(contaId, valor);
+			return ResponseEntity.ok("Saque realizado com sucesso." + saque + " reais de saque!");
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 
 	@PostMapping("/{contaId}/deposito")
-	public ResponseEntity<String> deposito(@PathVariable String contaId, @RequestParam double valor) {
+	public ResponseEntity<String> deposito(@PathVariable @Pattern(regexp = "^[^\\\\/]*$") String contaId, @RequestParam double valor) {
 		try {
 			service.realizaDeposito(contaId, valor);
 			return ResponseEntity.ok("Deposito realizado com sucesso.");

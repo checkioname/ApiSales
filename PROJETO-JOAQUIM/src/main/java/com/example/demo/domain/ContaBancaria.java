@@ -1,88 +1,93 @@
 package com.example.demo.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
-
+import com.example.demo.domain.TaxaStrategy.Taxa;
 import com.example.demo.dto.ClienteDTO;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Document(collection="conta")
-public class ContaBancaria implements Serializable {
-	private static final long serialVersionUID = 1L;
+import java.util.Objects;
 
-	@Id
-	@Getter
-	private String id;
-	@Getter
-	@Setter
-	private Double saldo;
-	@Getter
-	@Setter
-	private Double limite;
-	@Getter
-	@Setter
-	private String nroAgencia;
-	@Getter
-	@Setter
-	private ClienteDTO cliente;
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Document(collection="conta")
+    public class ContaBancaria {
 
-	public ContaBancaria(ClienteDTO cliente, String nroAgencia) {
-		super();
-		this.saldo = 0.0;
-		this.limite = 0.0;
-		this.nroAgencia = nroAgencia;
-		this.cliente = cliente;
-	}
+        @Id
+        @Getter
+        private String id;
+        @Getter
+        @Setter
+        private Double saldo;
+        @Getter
+        @Setter
+        private Double limite;
+        @Getter
+        @Setter
+        private String nroAgencia;
+        @Getter
+        @Setter
+        private ClienteDTO cliente;
 
-	public ContaBancaria(double saldo, double limite, String nroAgencia, ClienteDTO clienteDTO) {
-		super();
-		this.saldo = saldo;
-		this.limite = limite;
-		this.nroAgencia = nroAgencia;
-		this.cliente = clienteDTO;
-	}
+        private Taxa taxa;
+
+        public ContaBancaria(ClienteDTO cliente, String nroAgencia) {
+            super();
+            this.saldo = 0.0;
+            this.limite = 0.0;
+            this.nroAgencia = nroAgencia;
+            this.cliente = cliente;
+        }
+
+        public ContaBancaria(double saldo, double limite, String nroAgencia, ClienteDTO clienteDTO, Taxa taxa) {
+            super();
+            this.saldo = saldo;
+            this.limite = limite;
+            this.nroAgencia = nroAgencia;
+            this.cliente = clienteDTO;
+            this.taxa = taxa;
+        }
 
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
+        public int hashCode() {
+            return Objects.hash(id);
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ContaBancaria other = (ContaBancaria) obj;
-		return Objects.equals(id, other.id);
-	}
 
-	public boolean verificaSaldoSaque(double valorSaque) {
-		if (valorSaque <= 0){
-			return false;
-		}
-		if (valorSaque <= (this.saldo + this.limite)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            ContaBancaria other = (ContaBancaria) obj;
+            return Objects.equals(id, other.id);
+        }
 
-	public void sacar(double valor) {
-		if (verificaSaldoSaque(valor)) {
-			this.saldo -= valor;
-			if (this.saldo < 0) {
-				this.limite += saldo;
-				this.saldo = 0.0;
-			}
-		}
-	}
-}
+        public boolean verificaSaldoSaque(@NotNull double valorSaque) {
+            if (valorSaque <= 0) {
+                return false;
+            }
+            if ((valorSaque + taxa.calcularTaxa(valorSaque)) <= (this.saldo + this.limite)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public @NotNull Double sacar(@NotNull Double valorSaque) {
+            if (verificaSaldoSaque(valorSaque)) {
+                this.saldo -= valorSaque;
+                valorSaque -= taxa.calcularTaxa(valorSaque);
+                if (this.saldo < 0) {
+                    this.limite += saldo;
+                    this.saldo = 0.0;
+                }
+                return valorSaque;
+            }
+            return 0.0;
+        }
+    }

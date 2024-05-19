@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.domain.Cliente;
+import com.example.demo.domain.ContaBancaria;
 import com.example.demo.dto.ClienteDTO;
 import com.example.demo.dto.ContaDTO;
 import com.example.demo.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.ContaBancaria;
 import com.example.demo.repository.ContaBancariaRepository;
 import com.example.demo.services.exception.ObjectNotFoundException;
 
@@ -49,11 +50,11 @@ public class ContaBancariaService {
 		return new ContaBancaria(clienteDTO, conta.getAgencia());
 	}
 
-	public void realizaDeposito(String ContaId, Double valor){
-			ContaBancaria conta = repoConta.findById(ContaId)
-									.orElseThrow(() -> new IllegalArgumentException("Conta não encontrada com o ID fornecido"));;
-				if (validaValorDeposito(valor)){
-					conta.setSaldo(conta.getSaldo() + valor);
+	public void realizaDeposito(String contaId, Double valorDeposito){
+				ContaBancaria conta = repoConta.findById(contaId)
+				.orElseThrow(() -> new IllegalArgumentException("Conta não encontrada com o ID fornecido"));
+				if (validaValorDeposito(valorDeposito)){
+					conta.setSaldo(conta.getSaldo() + valorDeposito);
 					repoConta.save(conta);
 				}
 				else{
@@ -62,12 +63,14 @@ public class ContaBancariaService {
 			}
 
 
-	public void realizaSaque(String ContaId, Double valorSaque){
+	public Double realizaSaque(String ContaId, Double valorSaque){
 		ContaBancaria conta = repoConta.findById(ContaId)
 				.orElseThrow(() -> new IllegalArgumentException("Conta não encontrada com o ID fornecido"));;
 		if (conta.verificaSaldoSaque(valorSaque)){
-			conta.sacar(valorSaque);
-			repoConta.save(conta);}
+			Double saque = conta.sacar(valorSaque);
+			repoConta.save(conta);
+			return saque;
+		}
 		else{
 			if (valorSaque <= 0){
 				throw new IllegalArgumentException("Valor inválido");

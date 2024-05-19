@@ -82,6 +82,4 @@ public class Cliente implements Serializable{
 		Cliente other = (Cliente) obj;
 		return id == other.id;
 	}
-
-
 }
